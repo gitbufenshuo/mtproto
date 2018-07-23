@@ -14,7 +14,7 @@ func (m *MTProto) AuthSendCode(phonenumber string) (*TL_auth_sentCode, error) {
 		Api_id:          m.id,
 		Api_hash:        m.hash,
 	})
-
+	fmt.Println("m.InvokeSync_over")
 	if err != nil {
 		return nil, err
 	}

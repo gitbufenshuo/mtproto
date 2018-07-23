@@ -292,7 +292,7 @@ func (m *MTProto) readRoutine() {
 
 func (m *MTProto) InvokeSync(msg TL) (*TL, error) {
 	x := <-m.InvokeAsync(msg)
-
+	fmt.Println("m.InvokeAsync_over")
 	if x.err != nil {
 		if err, ok := x.err.(TL_rpc_error); ok {
 			switch err.Error_code {
