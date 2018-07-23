@@ -221,7 +221,7 @@ func (m *MTProto) reconnect(newaddr string) error {
 	if newaddr != m.network.Address() {
 		m.network, err = NewNetwork(true, m.authkeyfile, m.queueSend, newaddr, m.IPv6)
 	}
-
+	fmt.Println("m.Connect")
 	err = m.Connect()
 	return err
 }
@@ -297,7 +297,7 @@ func (m *MTProto) InvokeSync(msg TL) (*TL, error) {
 		if err, ok := x.err.(TL_rpc_error); ok {
 			switch err.Error_code {
 			case errorSeeOther:
-				fmt.Println("m.errorSeeOther")
+				fmt.Println("m.errorSeeOther---")
 				var newDc int32
 				n, _ := fmt.Sscanf(err.Error_message, "PHONE_MIGRATE_%d", &newDc)
 				if n != 1 {
@@ -306,10 +306,12 @@ func (m *MTProto) InvokeSync(msg TL) (*TL, error) {
 						return nil, fmt.Errorf("RPC error_string: %s", err.Error_message)
 					}
 				}
+				fmt.Println("n==1")
 				newDcAddr, ok := m.dclist[newDc]
 				if !ok {
 					return nil, fmt.Errorf("wrong DC index: %d", newDc)
 				}
+				fmt.Println("ok")
 				err := m.reconnect(newDcAddr)
 				if err != nil {
 					return nil, err
