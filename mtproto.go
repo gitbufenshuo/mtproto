@@ -113,7 +113,7 @@ const (
 )
 
 // Current API Layer Version
-const layer = 65
+const layer = 23
 
 func NewMTProto(id int32, hash string, opts ...Option) (*MTProto, error) {
 	var err error
