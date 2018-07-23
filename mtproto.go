@@ -297,6 +297,7 @@ func (m *MTProto) InvokeSync(msg TL) (*TL, error) {
 		if err, ok := x.err.(TL_rpc_error); ok {
 			switch err.Error_code {
 			case errorSeeOther:
+				fmt.Println("m.errorSeeOther")
 				var newDc int32
 				n, _ := fmt.Sscanf(err.Error_message, "PHONE_MIGRATE_%d", &newDc)
 				if n != 1 {
@@ -314,13 +315,14 @@ func (m *MTProto) InvokeSync(msg TL) (*TL, error) {
 					return nil, err
 				}
 			default:
+				fmt.Println("m.default")
 				return nil, x.err
 			}
 		}
-
+		fmt.Println("NOT_TL_rpc_error")
 		return nil, x.err
 	}
-
+	fmt.Println("m.InvokeAsync_not_nil")
 	return &x.data, nil
 }
 
