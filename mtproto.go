@@ -292,12 +292,12 @@ func (m *MTProto) readRoutine() {
 
 func (m *MTProto) InvokeSync(msg TL) (*TL, error) {
 	x := <-m.InvokeAsync(msg)
-	fmt.Println("m.InvokeAsync_over")
+
 	if x.err != nil {
 		if err, ok := x.err.(TL_rpc_error); ok {
 			switch err.Error_code {
 			case errorSeeOther:
-				fmt.Println("m.errorSeeOther---", err.Error_message)
+
 				var newDc int32
 				n, _ := fmt.Sscanf(err.Error_message, "PHONE_MIGRATE_%d", &newDc)
 				if n != 1 {
@@ -306,25 +306,25 @@ func (m *MTProto) InvokeSync(msg TL) (*TL, error) {
 						return nil, fmt.Errorf("RPC error_string: %s", err.Error_message)
 					}
 				}
-				fmt.Println("n==1")
+
 				newDcAddr, ok := m.dclist[newDc]
 				if !ok {
 					return nil, fmt.Errorf("wrong DC index: %d", newDc)
 				}
-				fmt.Println("ok")
+
 				err := m.reconnect(newDcAddr)
 				if err != nil {
 					return nil, err
 				}
 			default:
-				fmt.Println("m.default")
+
 				return nil, x.err
 			}
 		}
-		fmt.Println("NOT_TL_rpc_error")
+
 		return nil, x.err
 	}
-	fmt.Println("m.InvokeAsync_not_nil")
+
 	return &x.data, nil
 }
 
