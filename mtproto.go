@@ -96,7 +96,7 @@ var defaultOptions = options{
 	Language:      "en",
 	IPv6:          false,
 	AuthkeyFile:   os.Getenv("HOME") + "/mtproto.auth",
-	ServerAddress: "149.154.167.50:443",
+	ServerAddress: "91.108.56.115:443",
 	Version:       "0.0.1",
 	NewSession:    false,
 }
