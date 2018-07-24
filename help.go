@@ -4,7 +4,7 @@ import "fmt"
 
 func (m *MTProto) HelpGetConfig() (*TL_config, error) {
 	var config TL_config
-	tl, err := m.InvokeSync(TL_auth_sendCode{})
+	tl, err := m.InvokeSync(TL_help_getConfig{})
 	fmt.Println("m.InvokeSync_over", err)
 	if err != nil {
 		return nil, err
