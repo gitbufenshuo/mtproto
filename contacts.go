@@ -62,5 +62,6 @@ func (m *MTProto) ImportContacts(larens []*TL_inputPhoneContact) {
 	}
 	m.InvokeSync(TL_contacts_importContacts{
 		Contacts: _contacts,
+		Replace:  TL_boolTrue{},
 	})
 }
