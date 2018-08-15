@@ -1,6 +1,9 @@
 package mtproto
 
-import "errors"
+import (
+	"errors"
+	"time"
+)
 
 func (m *MTProto) ContactsGetContacts(hash string) (*TL, error) {
 	return m.InvokeSync(TL_contacts_getContacts{
@@ -64,4 +67,30 @@ func (m *MTProto) ImportContacts(larens []*TL_inputPhoneContact) {
 		Contacts: _contacts,
 		Replace:  TL_boolTrue{},
 	})
+}
+
+func (m *MTProto) DeleteContact(inputUser *TL_inputUser) {
+	m.InvokeSync(TL_contacts_deleteContact{
+		Id: *inputUser,
+	})
+}
+func (m *MTProto) DeleteContactList(inputUser []*TL_inputUser) {
+	tl := []TL{}
+	for idx := range inputUser {
+		tl = append(tl, *(inputUser[idx]))
+	}
+	m.InvokeSync(TL_contacts_deleteContacts{
+		Id: tl,
+	})
+}
+
+func (m *MTProto) InviteToChannel(inputUsers []TL, channel TL_inputChannel) {
+	time.Sleep(time.Second * 5) // make sure
+
+	// invite to channel
+	tlmain := TL_channels_inviteToChannel{
+		Channel: channel,
+		Users:   inputUsers,
+	}
+	m.InvokeSync(tlmain)
 }
