@@ -2,6 +2,9 @@ package mtproto
 
 import (
 	"errors"
+	"fmt"
+	"os"
+	"strings"
 	"time"
 )
 
@@ -70,6 +73,7 @@ func (m *MTProto) ImportContacts(larens []*TL_inputPhoneContact) {
 }
 
 func (m *MTProto) DeleteContact(inputUser *TL_inputUser) {
+	time.Sleep(time.Second * 1)
 	m.InvokeSync(TL_contacts_deleteContact{
 		Id: *inputUser,
 	})
@@ -85,12 +89,57 @@ func (m *MTProto) DeleteContactList(inputUser []*TL_inputUser) {
 }
 
 func (m *MTProto) InviteToChannel(inputUsers []TL, channel TL_inputChannel) {
-	time.Sleep(time.Second * 5) // make sure
+	time.Sleep(time.Second * 1) // make sure
 
 	// invite to channel
 	tlmain := TL_channels_inviteToChannel{
 		Channel: channel,
 		Users:   inputUsers,
 	}
-	m.InvokeSync(tlmain)
+	_, err := m.InvokeSync(tlmain)
+	if err != nil {
+		fmt.Printf("err->%v\n", err)
+		if strings.Contains(err.Error(), "CHAT_WRITE_FORBIDDEN") || strings.Contains(err.Error(), "PEER_FLOOD") || strings.Contains(err.Error(), "USER_BANNED_IN_CHANNEL") {
+			fmt.Printf("willexit->%v\n", err)
+			os.Exit(1)
+		}
+	}
+}
+
+func (m *MTProto) JoinChannel(channel TL_inputChannel) {
+	time.Sleep(time.Second * 1) // make sure
+
+	// invite to channel
+	tlmain := TL_channels_joinChannel{
+		Channel: channel,
+	}
+	_, err := m.InvokeSync(tlmain)
+	if err != nil {
+		fmt.Printf("err->%v\n", err)
+		if strings.Contains(err.Error(), "CHAT_WRITE_FORBIDDEN") || strings.Contains(err.Error(), "PEER_FLOOD") {
+			fmt.Printf("willexit->%v\n", err)
+			os.Exit(1)
+		}
+	}
+}
+func (m *MTProto) ResolveName(run TL_contacts_resolveUsername) int64 {
+	time.Sleep(time.Second * 10) // make sure
+
+	// invite to channel
+	tlmain := run
+	tl, err := m.InvokeSync(tlmain)
+	if err != nil {
+		fmt.Printf("err->%v\n", err)
+		if strings.Contains(err.Error(), "CHAT_WRITE_FORBIDDEN") || strings.Contains(err.Error(), "PEER_FLOOD") {
+			fmt.Printf("willexit->%v\n", err)
+			os.Exit(1)
+		}
+	}
+	peer := (*tl).(TL_contacts_resolvedPeer)
+	for idx := range peer.Chats {
+		if tl_channel, ok := peer.Chats[idx].(TL_channel); ok {
+			return tl_channel.Access_hash
+		}
+	}
+	return 88
 }
